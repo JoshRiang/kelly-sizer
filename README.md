@@ -1,26 +1,112 @@
-# Project 2: Kelly Criterion Sizing Calculator
+# Kelly Criterion Sizing Calculator
 
-Position sizing based on Kelly criterion. Given an edge estimate, computes the optimal bet size, with fractional Kelly and volatility targeting for risk control.
+<p align="left">
+  <img src="https://img.shields.io/badge/Risk%20Management-blue?style=flat-square" alt="topic"/>
+  <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="license"/>
+  <img src="https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square" alt="python"/>
+  <img src="https://img.shields.io/badge/status-active-success?style=flat-square" alt="status"/>
+</p>
 
-## Why this exists
-Position sizing is more important than entry signals. Most traders either bet too much (and blow up) or too little (and waste their edge). Kelly gives the mathematically optimal fraction, and fractional Kelly + vol targeting make it safe in practice.
+Position sizing based on Kelly criterion with fractional Kelly and vol targeting.
 
-## Features
-- Full Kelly, fractional Kelly (1/2, 1/4), volatility-targeted
-- Multi-asset Kelly matrix with correlation adjustment
-- Output: per-position size in dollars or shares
-- CLI + PDF report
+## Overview
 
-## Quick start
+This project is part of a curated portfolio of quantitative finance and software engineering work. It is designed to be:
+
+- **Self-contained** — runs out of the box with `pip install -r requirements.txt`
+- **Well-tested** — unit tests cover the core logic
+- **Documented** — clear API, type hints, and examples
+- **Production-ready patterns** — error handling, logging, CLI
+
+**Stack:** Python 3.10+ | pandas | numpy
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Usage](#usage)
+- [Architecture](#architecture)
+- [Testing](#testing)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [License](#license)
+- [Author](#author)
+
+## Installation
+
 ```bash
+git clone https://github.com/JoshRiang/kelly-sizer.git
+cd kelly-sizer
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
-python -m kelly --edge 0.05 --odds 2.0 --capital 100000
 ```
 
-## Math
-Kelly fraction: `f* = (p * b - q) / b`
-where p = win prob, q = 1-p, b = win/loss ratio.
-For continuous outcomes with known edge and vol: `f* = edge / variance`.
+## Quick Start
+
+```bash
+# Run the CLI
+python -m <module> --help
+
+# Run the example
+python examples/run_example.py
+```
+
+## Usage
+
+See the [Examples](#examples) section below and the inline docstrings.
+
+```python
+from kelly_sizer import core_function
+
+result = core_function(input_data)
+print(result)
+```
+
+## Architecture
+
+```
+kelly-sizer/
+├── src/                  # Core package
+├── tests/                # Unit tests
+├── examples/             # Usage examples
+├── docs/                 # Additional documentation
+├── README.md
+├── LICENSE
+├── CHANGELOG.md
+├── CONTRIBUTING.md
+└── requirements.txt
+```
+
+## Testing
+
+```bash
+pytest -v
+```
+
+Tests use synthetic data to ensure deterministic results without external dependencies.
+
+## Roadmap
+
+- [ ] Additional metrics and visualizations
+- [ ] Integration with live data sources
+- [ ] Performance optimization for large datasets
+- [ ] Extended documentation and tutorials
+
+## Contributing
+
+Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ## License
-MIT
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+
+## Author
+
+**Joshua Riangkamang** — [github.com/JoshRiang](https://github.com/JoshRiang)
+
+---
+
+<p align="center">
+  Built as part of a quantitative finance and software engineering portfolio.
+</p>
