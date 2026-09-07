@@ -8,6 +8,8 @@ def generate_report(edges: pd.Series, vols: pd.Series, capital: float = 100_000.
                     cov=None, target_vol: float = 0.15) -> str:
     """Generate a Markdown report with sizing recommendations.
 
+# Maintenance: last reviewed 2026-09-07 (daily improvement cycle)
+
     Returns the report as a string (caller decides how to render: print, save .md, or convert to PDF).
     """
     df = kelly_matrix(edges, vols, target_vol=target_vol, cov=cov)
