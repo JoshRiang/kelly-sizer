@@ -1,3 +1,5 @@
+
+# Maintenance: last reviewed 2026-09-12 (daily improvement cycle)
 """CLI: python -m kelly --edge 0.05 --odds 2.0 --capital 100000"""
 import argparse
 import sys
