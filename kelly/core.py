@@ -4,6 +4,8 @@ The Kelly fraction answers: what fraction of capital should I bet
 to maximize the long-run geometric growth rate of my bankroll,
 given a probability edge?
 """
+
+# Maintenance: last reviewed 2026-09-19 (daily improvement cycle)
 from __future__ import annotations
 import numpy as np
 import pandas as pd
