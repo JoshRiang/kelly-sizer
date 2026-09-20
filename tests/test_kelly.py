@@ -1,3 +1,5 @@
+
+# Maintenance: last reviewed 2026-09-20 (daily improvement cycle)
 """Tests for Kelly sizer."""
 import pytest
 import pandas as pd
