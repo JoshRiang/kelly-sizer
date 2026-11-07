@@ -1,38 +1,8 @@
 # Kelly Criterion Sizing Calculator
 
-<p align="left">
-  <img src="https://img.shields.io/badge/Risk%20Management-blue?style=flat-square" alt="topic"/>
-  <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="license"/>
-  <img src="https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square" alt="python"/>
-  <img src="https://img.shields.io/badge/status-active-success?style=flat-square" alt="status"/>
-</p>
-
 Position sizing based on Kelly criterion with fractional Kelly and vol targeting.
 
-## Overview
-
-This project is part of a curated portfolio of quantitative finance and software engineering work. It is designed to be:
-
-- **Self-contained** — runs out of the box with `pip install -r requirements.txt`
-- **Well-tested** — unit tests cover the core logic
-- **Documented** — clear API, type hints, and examples
-- **Production-ready patterns** — error handling, logging, CLI
-
-**Stack:** Python 3.10+ | pandas | numpy
-
-## Table of Contents
-
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Usage](#usage)
-- [Architecture](#architecture)
-- [Testing](#testing)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
-- [License](#license)
-- [Author](#author)
-
-## Installation
+Answers: what fraction of capital should I bet to maximize long-run geometric growth, given a probability edge? Implements full/fractional binary Kelly, continuous `edge / variance` Kelly, vol-targeted Kelly scaled to a target annualized portfolio vol, and a correlation-adjusted Kelly matrix across multiple assets. CLI prints per-asset sizes and dollar amounts; `generate_report` emits a Markdown report (print, save .md, or convert to PDF). Captured formulas: `f* = (p*b − q) / b` for binary outcomes; `f* = edge / vol²` for continuous returns; correlation adjustment `1 / sqrt(1 + (n−1)·avg_corr)`.
 
 ```bash
 git clone https://github.com/JoshRiang/kelly-sizer.git
@@ -42,71 +12,60 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Quick Start
-
 ```bash
-# Run the CLI
-python -m <module> --help
+# Single binary bet: 60% win prob, 2:1 payoff, half Kelly, $100k capital
+python -m kelly --edge 0.6 --odds 2.0 --capital 100000 --fraction 0.5
 
-# Run the example
-python examples/run_example.py
+# Multi-asset demo (SPY, AGG, GLD, NVDA) with vol targeting at 15%
+python -m kelly --capital 100000 --out report.md
 ```
-
-## Usage
-
-See the [Examples](#examples) section below and the inline docstrings.
 
 ```python
-from kelly_sizer import core_function
+from kelly import kelly_fraction, fractional_kelly, kelly_from_edge_vol, vol_targeted_kelly, kelly_matrix, generate_report
+import pandas as pd
 
-result = core_function(input_data)
-print(result)
+# Binary Kelly: 60% win rate, 2:1 payoff -> f* = 0.40 (40% of capital)
+f = kelly_fraction(0.6, 2.0)        # 0.4
+half = fractional_kelly(0.6, 2.0, 0.5)  # 0.2
+
+# Continuous Kelly: edge 5%, vol 20% -> f = 0.05 / 0.04 = 1.25 (125% leveraged)
+f = kelly_from_edge_vol(0.05, 0.20)
+
+# Vol-targeted: scale to 15% portfolio vol, cap leverage at 1.0x
+f = vol_targeted_kelly(edge=0.10, vol=0.40, target_vol=0.15, leverage_cap=1.0)
+
+# Multi-asset matrix with correlation adjustment
+edges = pd.Series({'SPY': 0.05, 'AGG': 0.02, 'GLD': 0.03, 'NVDA': 0.10})
+vols  = pd.Series({'SPY': 0.16, 'AGG': 0.05, 'GLD': 0.15, 'NVDA': 0.45})
+df = kelly_matrix(edges, vols, target_vol=0.15)
+print(df[['raw_kelly', 'vol_targeted', 'final']])
+
+# Markdown report with dollar sizes
+report = generate_report(edges, vols, capital=100_000, target_vol=0.15)
+print(report)
 ```
 
-## Architecture
+Project structure:
 
 ```
 kelly-sizer/
-├── src/                  # Core package
-├── tests/                # Unit tests
-├── examples/             # Usage examples
-├── docs/                 # Additional documentation
-├── README.md
+├── kelly/
+│   ├── __init__.py     # exports: kelly_fraction, fractional_kelly, vol_targeted_kelly, kelly_from_edge_vol, kelly_matrix, generate_report
+│   ├── core.py         # kelly math: binary, fractional, edge/vol, vol-targeted, correlation matrix
+│   ├── report.py       # generate_report: Markdown sizing report with methodology + caveats
+│   └── __main__.py     # CLI: --edge --odds --capital --fraction --out
+├── tests/test_kelly.py # synthetic unit tests: basic Kelly, zero edge, fractional, edge/vol, vol-targeted, matrix clipping
+├── requirements.txt    # pandas, numpy
 ├── LICENSE
-├── CHANGELOG.md
-├── CONTRIBUTING.md
-└── requirements.txt
+└── README.md
 ```
 
-## Testing
+Testing:
 
 ```bash
 pytest -v
 ```
 
-Tests use synthetic data to ensure deterministic results without external dependencies.
+License: MIT — see [LICENSE](LICENSE).
 
-## Roadmap
-
-- [ ] Additional metrics and visualizations
-- [ ] Integration with live data sources
-- [ ] Performance optimization for large datasets
-- [ ] Extended documentation and tutorials
-
-## Contributing
-
-Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details.
-
-## License
-
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
-
-## Author
-
-**Joshua Riangkamang** — [github.com/JoshRiang](https://github.com/JoshRiang)
-
----
-
-<p align="center">
-  Built as part of a quantitative finance and software engineering portfolio.
-</p>
+Author: Joshua Riangkamang — [github.com/JoshRiang](https://github.com/JoshRiang)
