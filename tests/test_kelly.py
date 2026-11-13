@@ -21,9 +21,16 @@ def test_kelly_basic():
 
 
 def test_kelly_zero_edge():
-    # 50% win prob = no edge -> 0
-    f = kelly_fraction(0.5, 2.0)
+    # 50% win prob at even odds (b = 1) is the break-even case -> 0
+    f = kelly_fraction(0.5, 1.0)
     assert f == 0.0
+
+
+def test_kelly_even_odds_with_payoff_edge():
+    # 50% win prob at 2:1 is NOT break-even: EV = 0.5*2 - 0.5*1 = +0.5
+    # f* = (0.5*2 - 0.5)/2 = 0.25
+    f = kelly_fraction(0.5, 2.0)
+    assert abs(f - 0.25) < 1e-9
 
 
 def test_kelly_negative_edge_returns_zero():
@@ -45,8 +52,8 @@ def test_kelly_from_edge_vol():
 
 def test_vol_targeted():
     f = vol_targeted_kelly(0.10, 0.40, target_vol=0.15, leverage_cap=1.0)
-    # raw = 0.10/0.16 = 0.625, scaled = 0.625 * 0.15/0.40 = 0.234
-    assert abs(f - 0.234) < 1e-6
+    # raw = 0.10/0.16 = 0.625, scaled = 0.625 * 0.15/0.40 = 0.234375
+    assert abs(f - 0.234375) < 1e-9
 
 
 def test_kelly_matrix():
